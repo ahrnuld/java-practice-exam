@@ -1,0 +1,1591 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Java Practice Exam</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Styling follows bim.starwave.nl: sticky top bar with kicker + title, magenta accent, 6px radius, quiet panels. */
+:root {
+  --magenta: #e6007e; --magenta-dark: #b00062;
+  --ground: #faf7f9; --panel: #ffffff; --sunken: #f2eef0; --raised: #ffffff;
+  --line: #dbdbdb; --line-soft: #ececec;
+  --ink: #000000; --ink-2: #4a4348; --ink-3: #6e656b;
+  --accent: var(--magenta); --accent-ink: var(--magenta-dark); --accent-soft: #fde7f1; --accent-line: #f7bcda; --on-accent: #ffffff;
+  --pv: #5c4a00; --pv-soft: #fff8c2; --pv-edge: #d9c200;
+  --good: #1f7a3a; --good-soft: #e3f4e7; --good-edge: #3aa35a;
+  --bad: #b3261e; --bad-soft: #fde8e6; --bad-edge: #d9483e;
+  --shadow-s: 0 1px 2px rgba(0,0,0,.06);
+  --shadow-m: 0 1px 2px rgba(0,0,0,.06), 0 10px 26px -18px rgba(0,0,0,.34);
+  --r: 6px;
+  --font: "Avenir Next LT Pro", "Avenir Next", Avenir, "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #141013; --panel: #1c181a; --sunken: #252023; --raised: #2b2528;
+    --line: #3a3236; --line-soft: #2c2529;
+    --ink: #f5f2f3; --ink-2: #bfb6bb; --ink-3: #8f868b;
+    --accent: #ff66b3; --accent-ink: #ff8cc6; --accent-soft: #3b0a22; --accent-line: #67203f; --on-accent: #1a0a11;
+    --pv: #ffe14d; --pv-soft: #332b00; --pv-edge: #ffe14d;
+    --good: #7fd897; --good-soft: #13301c; --good-edge: #4cbf6c;
+    --bad: #ff8a80; --bad-soft: #3a1512; --bad-edge: #e5584e;
+    --shadow-s: 0 1px 2px rgba(0,0,0,.5);
+    --shadow-m: 0 1px 2px rgba(0,0,0,.5), 0 10px 26px -18px rgba(0,0,0,.95);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #141013; --panel: #1c181a; --sunken: #252023; --raised: #2b2528;
+  --line: #3a3236; --line-soft: #2c2529;
+  --ink: #f5f2f3; --ink-2: #bfb6bb; --ink-3: #8f868b;
+  --accent: #ff66b3; --accent-ink: #ff8cc6; --accent-soft: #3b0a22; --accent-line: #67203f; --on-accent: #1a0a11;
+  --pv: #ffe14d; --pv-soft: #332b00; --pv-edge: #ffe14d;
+  --good: #7fd897; --good-soft: #13301c; --good-edge: #4cbf6c;
+  --bad: #ff8a80; --bad-soft: #3a1512; --bad-edge: #e5584e;
+  --shadow-s: 0 1px 2px rgba(0,0,0,.5);
+  --shadow-m: 0 1px 2px rgba(0,0,0,.5), 0 10px 26px -18px rgba(0,0,0,.95);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; }
+body {
+  background: var(--ground); color: var(--ink);
+  font-family: var(--font); font-size: 15px; line-height: 1.55;
+}
+h1, h2, h3 { margin: 0; line-height: 1.2; text-wrap: balance; font-weight: 700; }
+h1 { font-size: 28px; }
+h2 { font-size: 18px; }
+h3 { font-size: 15px; }
+p { margin: 0; }
+.muted { color: var(--ink-2); }
+.eyebrow {
+  font-size: 11.5px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--ink-3);
+}
+code {
+  font-family: var(--mono); font-size: 0.88em;
+  background: var(--sunken); padding: 0.05em 0.35em; border-radius: 4px; overflow-wrap: anywhere;
+}
+pre {
+  margin: 0; font-family: var(--mono); font-size: 13px; line-height: 1.55;
+  background: var(--sunken); border: 1px solid var(--line-soft); border-radius: var(--r);
+  padding: 12px 14px; overflow-x: auto; tab-size: 4;
+}
+pre code { background: none; padding: 0; font-size: inherit; overflow-wrap: normal; }
+
+/* Top bar (as on bim.starwave.nl) */
+.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: var(--panel); border-bottom: 1px solid var(--line-soft); box-shadow: var(--shadow-s);
+}
+.bar {
+  max-width: 50rem; margin: 0 auto; display: flex; align-items: center; gap: 14px;
+  padding-block: 10px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.logo { height: 32px; width: auto; display: block; flex: none; }
+.brand { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.brand .k { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+.brand .t { font-weight: 700; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.theme { display: flex; gap: 2px; background: var(--sunken); border-radius: var(--r); padding: 2px; flex: none; }
+.theme button {
+  background: transparent; color: var(--ink-3); border: 0; padding: 6px 8px; border-radius: 5px;
+  display: grid; place-items: center; cursor: pointer;
+}
+.theme button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-ink); }
+
+.wrap {
+  max-width: 50rem; margin: 0 auto;
+  padding-block: 24px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 20px;
+}
+.sheet {
+  background: var(--panel); border: 1px solid var(--line-soft); border-radius: var(--r);
+  box-shadow: var(--shadow-m);
+  padding: clamp(16px, 4vw, 24px);
+  display: flex; flex-direction: column; gap: 18px; min-width: 0;
+}
+
+button { font: inherit; }
+.btn, .actions button {
+  font-weight: 600; font-size: 14.5px; border-radius: var(--r); padding: 9px 16px; cursor: pointer;
+  border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent);
+}
+.actions button.secondary { background: var(--accent-soft); border-color: transparent; color: var(--accent-ink); }
+.actions button:disabled { opacity: 0.4; cursor: not-allowed; }
+button:focus-visible, input:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.actions .spacer { flex: 1; }
+
+/* Start screen */
+.field { display: flex; flex-direction: column; gap: 6px; }
+label { font-weight: 600; }
+input[type="text"] {
+  font: inherit; padding: 9px 12px; border-radius: var(--r);
+  border: 1px solid var(--line); background: var(--sunken); color: var(--ink); width: 100%;
+}
+.callout {
+  background: var(--accent-soft); border-left: 3px solid var(--accent);
+  border-radius: var(--r); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px;
+}
+.callout .eyebrow { color: var(--accent-ink); }
+.facts {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--line-soft); border-radius: var(--r); background: var(--panel);
+}
+.fact { padding: 12px 14px; border-left: 1px solid var(--line-soft); }
+.fact:first-child { border-left: 0; }
+.fact b { display: block; font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.fact span { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+.lecture-list { margin: 0; padding-left: 1.2rem; columns: 2 16rem; column-gap: 2rem; font-size: 14px; }
+.lecture-list li { break-inside: avoid; margin-bottom: 3px; }
+
+/* Progress strip */
+.progress { display: flex; flex-direction: column; gap: 8px; }
+.progress-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.strip { display: grid; grid-template-columns: repeat(20, 1fr); gap: 4px; }
+.dot { height: 8px; border-radius: 2px; background: var(--line); }
+.dot.current { background: var(--accent); }
+.dot.good { background: var(--good-edge); }
+.dot.bad { background: var(--bad-edge); }
+.count { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.tag {
+  display: inline-block; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 2px 7px; border-radius: 4px; background: var(--accent-soft); color: var(--accent-ink);
+}
+
+/* Question */
+.qhead { display: flex; flex-direction: column; gap: 6px; }
+.qmeta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.qnum { font-family: var(--mono); font-size: 12.5px; color: var(--ink-3); }
+.prompt { font-size: 17px; font-weight: 700; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opt {
+  display: flex; gap: 12px; align-items: flex-start; text-align: left; width: 100%;
+  font-size: 15px; line-height: 1.5; cursor: pointer;
+  background: var(--panel); color: var(--ink); border: 1px solid var(--line);
+  border-left-width: 3px; border-radius: var(--r); padding: 10px 12px;
+}
+.opt:hover:not(:disabled) { border-color: var(--accent-line); border-left-color: var(--accent); }
+.opt:disabled { cursor: default; }
+.bubble {
+  flex: none; width: 26px; height: 26px; border-radius: 4px;
+  background: var(--sunken); display: grid; place-items: center;
+  font-family: var(--mono); font-weight: 500; font-size: 13px; color: var(--ink-2);
+}
+.opt-text { min-width: 0; padding-top: 1px; }
+.opt.selected { border-color: var(--accent-line); border-left-color: var(--accent); background: var(--accent-soft); }
+.opt.selected .bubble { background: var(--accent); color: var(--on-accent); }
+.opt.correct { border-color: var(--good-edge); background: var(--good-soft); }
+.opt.correct .bubble { background: var(--good-edge); color: #fff; }
+.opt.wrong { border-color: var(--bad-edge); background: var(--bad-soft); }
+.opt.wrong .bubble { background: var(--bad-edge); color: #fff; }
+.feedback { border-radius: var(--r); border-left: 3px solid; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.feedback.good { background: var(--good-soft); border-color: var(--good-edge); }
+.feedback.bad { background: var(--bad-soft); border-color: var(--bad-edge); }
+.feedback .verdict { font-weight: 700; }
+.feedback.good .verdict { color: var(--good); }
+.feedback.bad .verdict { color: var(--bad); }
+.src { font-size: 13px; color: var(--ink-3); }
+.hint { font-size: 12.5px; color: var(--ink-3); }
+
+/* Results */
+.score-row { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; }
+.score-big { font-weight: 700; font-size: clamp(44px, 12vw, 64px); line-height: 1; font-variant-numeric: tabular-nums; }
+.score-big small { font-size: 0.4em; color: var(--ink-3); font-weight: 600; }
+.score-pct { font-size: 20px; font-weight: 700; color: var(--accent-ink); }
+.lec-rows { display: flex; flex-direction: column; }
+.lec {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 16px;
+  padding: 14px 0; border-top: 1px solid var(--line-soft);
+}
+.lec:first-child { border-top: 0; padding-top: 0; }
+.lec-name { font-weight: 700; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.lec-week { font-size: 12.5px; color: var(--ink-3); }
+.lec-score { font-family: var(--mono); font-size: 14px; font-variant-numeric: tabular-nums; text-align: right; }
+.bar-track { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--sunken); overflow: hidden; }
+.bar-track > i { display: block; height: 100%; }
+.chip {
+  display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 2px 7px; border-radius: 4px;
+}
+.chip.study { background: var(--bad-soft); color: var(--bad); }
+.chip.review { background: var(--pv-soft); color: var(--pv); }
+.chip.solid { background: var(--good-soft); color: var(--good); }
+.revisit { grid-column: 1 / -1; font-size: 14px; display: flex; flex-direction: column; gap: 3px; }
+.revisit ul { margin: 0; padding-left: 1.2rem; }
+.file { font-family: var(--mono); font-size: 12px; color: var(--ink-3); overflow-wrap: anywhere; }
+details.miss { border-top: 1px solid var(--line-soft); padding: 12px 0; }
+details.miss:first-of-type { border-top: 0; padding-top: 0; }
+details.miss summary { cursor: pointer; font-weight: 600; }
+details.miss[open] summary { margin-bottom: 12px; }
+.miss-body { display: flex; flex-direction: column; gap: 10px; }
+.answer-line { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 14px; }
+.answer-line .yours { color: var(--bad); }
+.answer-line .right { color: var(--good); }
+
+/* Mode choice and study advice */
+.start-form { display: flex; flex-direction: column; gap: 18px; }
+.modes { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.modes legend { font-weight: 600; padding: 0; margin-bottom: 6px; }
+.mode {
+  display: flex; gap: 12px; align-items: flex-start; cursor: pointer; font-weight: 400;
+  border: 1px solid var(--line); border-left-width: 3px; border-radius: var(--r); padding: 10px 12px; background: var(--panel);
+}
+.mode:hover { border-color: var(--accent-line); border-left-color: var(--accent); }
+.mode:has(input:checked) { border-color: var(--accent-line); border-left-color: var(--accent); background: var(--accent-soft); }
+.mode input { accent-color: var(--accent); margin-top: 4px; flex: none; }
+.mode input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mode-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mode-title { font-weight: 700; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.mode-desc { font-size: 14px; color: var(--ink-2); }
+.advice { margin: 0; padding-left: 1.2rem; font-size: 14px; display: flex; flex-direction: column; gap: 4px; }
+.notice { background: var(--pv-soft); color: var(--ink); border-left: 3px solid var(--pv-edge); border-radius: var(--r); padding: 10px 12px; font-size: 14px; }
+.dot.done { background: var(--accent-line); }
+@media (prefers-reduced-motion: no-preference) {
+  .bar-track > i { transition: width 0.6s ease; }
+}
+@media (max-width: 30rem) {
+  .strip { grid-template-columns: repeat(10, 1fr); }
+  .facts { grid-template-columns: 1fr; }
+  .fact { border-left: 0; border-top: 1px solid var(--line-soft); }
+  .fact:first-child { border-top: 0; }
+  .logo { height: 26px; }
+}
+</style>
+
+<header class="topbar">
+  <div class="bar">
+    <img class="logo" src="inholland-logo.svg" alt="Inholland" onerror="this.hidden=true">
+    <div class="brand"><span class="k">Java Fundamentals</span><span class="t">Practice exam</span></div>
+    <div class="theme" role="group" aria-label="Theme">
+      <button type="button" data-theme-set="light" aria-label="Light" title="Light" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></button>
+      <button type="button" data-theme-set="system" aria-label="System" title="System" aria-pressed="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M8 20h8M12 16v4"></path></svg></button>
+      <button type="button" data-theme-set="dark" aria-label="Dark" title="Dark" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="app"></main>
+
+<script type="text/markdown" id="exam-md">
+# Questions: Week 1, lesson 1 - Java for C# developers
+
+Source: lectures/Week 01 - Lesson 01 - Java for C# developers.pdf
+
+## 1. A developer compiles `Invoice.java` on a Windows laptop and copies only the resulting `Invoice.class` to a Linux server that has a JVM installed. What happens when the class is started on the server?
+
+- A. It fails, because the `.class` file contains x86 machine code for Windows and must be recompiled on Linux.
+- B. It runs: the `.class` file holds bytecode, and the Linux JVM turns that bytecode into machine code for its own CPU while the program runs.
+- C. It runs, but only in interpreted mode, because Just-In-Time compilation only works on the operating system the code was compiled on.
+- D. It fails until `javap` is run on the server to convert the bytecode into Java source again.
+
+**Answer:** B
+
+**Explanation:** `javac` compiles Java source to platform-independent bytecode, and the OS-specific JVM JIT-compiles that bytecode to machine code at execution time. That is what makes "write once, run anywhere" work.
+
+**Source:** lectures/Week 01 - Lesson 01 - Java for C# developers.pdf — The idea behind Java
+
+## 2. Given the classes below in package `nl.store.model`, a class `StockReport` in package `nl.store.ui` (not a subclass of `Product`) has a `Product p`. Which field can `StockReport` access directly as `p.<field>`?
+
+```java
+package nl.store.model;
+
+public class Product {
+    String sku;
+    private double price;
+    protected int stock;
+    public String name;
+}
+```
+
+- A. `sku`
+- B. `name`
+- C. `stock`
+- D. `price`
+
+**Answer:** B
+
+**Explanation:** Writing no modifier makes a member package-private (visible only inside `nl.store.model`), `protected` adds subclasses, and `private` stays inside the class; only `public` reaches an unrelated class in another package.
+
+**Source:** lectures/Week 01 - Lesson 01 - Java for C# developers.pdf — Encapsulation in Java
+
+## 3. What does this code print?
+
+```java
+class Shape {
+    public double area() { return 0; }
+}
+
+class Square extends Shape {
+    private double side = 2;
+    public double Area() { return side * side; }
+}
+
+Shape s = new Square();
+System.out.println(s.area());
+```
+
+- A. `0.0`
+- B. `4.0`
+- C. Nothing: it does not compile, because `Square` must override `area()`.
+- D. Nothing: it throws an exception because `Area()` hides `area()`.
+
+**Answer:** A
+
+**Explanation:** `Area()` with a capital A is a second, unrelated method, so `area()` is not overridden and `Shape`'s version runs. Writing `@Override` would have made the compiler report the mistake.
+
+**Source:** lectures/Week 01 - Lesson 01 - Java for C# developers.pdf — Method overriding and @Override
+
+## 4. What does this code print?
+
+```java
+record Ticket(String code, int seat) { }
+
+Ticket first  = new Ticket("X9", 14);
+Ticket second = new Ticket("X9", 14);
+System.out.println(first.equals(second) + " " + (first == second));
+```
+
+- A. `false false`
+- B. `true false`
+- C. `true true`
+- D. `false true`
+
+**Answer:** B
+
+**Explanation:** A record gets `equals()` (and `hashCode()`) for free, comparing the component values, so the two are equal; `==` still compares references, and these are two different objects.
+
+**Source:** lectures/Week 01 - Lesson 01 - Java for C# developers.pdf — Modern Java: records
+
+## 5. What does this code print?
+
+```java
+int[][] seats = new int[3][5];
+seats[2][4] = 1;
+System.out.println(seats.length + " " + seats[0].length + " " + seats[1][1]);
+```
+
+- A. `5 3 0`
+- B. `15 5 0`
+- C. `3 5 0`
+- D. `3 5 null`
+
+**Answer:** C
+
+**Explanation:** `new int[3][5]` is 3 rows of 5 columns, so `seats.length` is 3 and each row has length 5; `int` is a primitive, so untouched cells hold `0`, not `null`.
+
+**Source:** lectures/Week 01 - Lesson 01 - Java for C# developers.pdf — Primitive types and arrays
+
+# Questions: Week 1, lesson 2 - Collections and generics
+
+Source: lectures/Week 01 - Lesson 02 - Collections and generics.pdf
+
+## 6. A developer coming from C# writes `List<int> scores = new ArrayList<>();`. What happens?
+
+- A. It compiles, and Java stores the values as primitives for speed.
+- B. It compiles, but adding a value throws an exception at runtime.
+- C. It does not compile; the list has to be declared as `List<Integer>`.
+- D. It does not compile; the variable has to be declared as `ArrayList<int>` instead of `List<int>`.
+
+**Answer:** C
+
+**Explanation:** Unlike in C#, a Java collection cannot contain primitives; they must be wrapped in wrapper classes such as `Integer`.
+
+**Source:** lectures/Week 01 - Lesson 02 - Collections and generics.pdf — Collection framework (1 of 2)
+
+## 7. What does this code print?
+
+```java
+Set<String> codes = new HashSet<>();
+System.out.print(codes.add("NL") + " ");
+System.out.print(codes.add("BE") + " ");
+System.out.print(codes.add("NL") + " ");
+System.out.println(codes.size());
+```
+
+- A. `true true true 3`
+- B. `true true false 3`
+- C. `true true false 2`
+- D. `true true` and then an exception, because duplicates are not allowed
+
+**Answer:** C
+
+**Explanation:** A `Set` never holds an element more than once: adding a duplicate does not throw, `add` simply returns `false` and the set is unchanged.
+
+**Source:** lectures/Week 01 - Lesson 02 - Collections and generics.pdf — HashSet example
+
+## 8. A developer wants to keep `Badge` objects sorted in a `TreeSet<Badge>`. What does the `Badge` class need?
+
+```java
+class Badge {
+    private final String label;
+    Badge(String label) { this.label = label; }
+}
+```
+
+- A. Nothing; a `TreeSet` sorts any object by its `hashCode()`.
+- B. A `toString()` method, because a `TreeSet` sorts objects by their text.
+- C. It must implement `Comparable<Badge>` with a `compareTo` method (or the `TreeSet` must be given a `Comparator`).
+- D. It must be declared `final`, so the order cannot change.
+
+**Answer:** C
+
+**Explanation:** A `TreeSet` keeps its elements sorted by comparing them, so it can only contain objects that implement `Comparable`, unless a `Comparator` is passed to its constructor.
+
+**Source:** lectures/Week 01 - Lesson 02 - Collections and generics.pdf — Interface: Set<E>
+
+## 9. What does this code print?
+
+```java
+Map<String, Integer> stock = new TreeMap<>();
+stock.put("pears", 4);
+stock.put("apples", 9);
+stock.put("cherries", 1);
+for (String product : stock.keySet()) {
+    System.out.print(product + " ");
+}
+```
+
+- A. `apples cherries pears`
+- B. `pears apples cherries`
+- C. `cherries pears apples`
+- D. The order is unpredictable.
+
+**Answer:** A
+
+**Explanation:** A `TreeMap` is sorted by key (not by value and not by insertion order), so the `String` keys come out alphabetically.
+
+**Source:** lectures/Week 01 - Lesson 02 - Collections and generics.pdf — TreeMap example
+
+## 10. What happens with this code?
+
+```java
+List<String> statuses = List.of("open", "closed");
+statuses.add("archived");
+System.out.println(statuses.size());
+```
+
+- A. It prints `3`.
+- B. It compiles, but `add` throws an `UnsupportedOperationException`.
+- C. It does not compile, because `List.of` returns an array.
+- D. It prints `2`, because the `add` is silently ignored.
+
+**Answer:** B
+
+**Explanation:** `List.of` creates an immutable collection: `add()` and `remove()` compile, but throw `UnsupportedOperationException` when called.
+
+**Source:** lectures/Week 01 - Lesson 02 - Collections and generics.pdf — Immutable collections
+
+# Questions: Week 2, lesson 1 - JavaFX foundations
+
+Source: lectures/Week 02 - Lesson 01 - JavaFX foundations.pdf
+
+## 11. Which statement correctly describes the relation between `Stage` and `Scene` in JavaFX?
+
+- A. The `Scene` is the application window, and the `Stage` is the area inside it where nodes are laid out.
+- B. The `Stage` is the application window, and the `Scene` is the canvas on which the nodes are laid out.
+- C. The `Stage` is the FXML file, and the `Scene` is the controller that belongs to it.
+- D. `Stage` and `Scene` are two names for the root layout pane, such as a `VBox`.
+
+**Answer:** B
+
+**Explanation:** A JavaFX application has two main components: the `Stage` is the window, and the `Scene` is the canvas holding the nodes.
+
+**Source:** lectures/Week 02 - Lesson 01 - JavaFX foundations.pdf — Anatomy of a JavaFX GUI
+
+## 12. How does this view appear on screen?
+
+```xml
+<VBox>
+    <Label text="Delete this file?"/>
+    <HBox>
+        <Button text="Yes"/>
+        <Button text="No"/>
+    </HBox>
+</VBox>
+```
+
+- A. The label and both buttons next to each other on one row.
+- B. The label, the Yes button and the No button stacked in one column.
+- C. The label on top, with the two buttons drawn on top of each other below it.
+- D. The label on top, with the Yes and No buttons side by side below it.
+
+**Answer:** D
+
+**Explanation:** A `VBox` stacks its children vertically and an `HBox` lays its children out one after the other horizontally; nesting an `HBox` inside a `VBox` is very common.
+
+**Source:** lectures/Week 02 - Lesson 01 - JavaFX foundations.pdf — Layouts
+
+# Questions: Week 2, lesson 2 - MVC and CRUD
+
+Source: lectures/Week 02 - Lesson 02 - MVC and CRUD.pdf
+
+## 13. In a JavaFX invoicing application, which of these lines belongs in the controller?
+
+- A. `amountField.clear();`
+- B. `if (invoice.getDueDate().isBefore(LocalDate.now())) { ... }`
+- C. `if (customers.stream().anyMatch(c -> c.getEmail().equals(email))) { ... }`
+- D. `if (order.getTotal() > 1000) { discount = 0.05; }`
+
+**Answer:** A
+
+**Explanation:** The controller handles a click in and a screen update out; a rule about one invoice or order belongs in the model, and a rule that needs the whole collection belongs in a service.
+
+**Source:** lectures/Week 02 - Lesson 02 - MVC and CRUD.pdf — Where does this line go?
+
+## 14. What does the table show after the last line runs?
+
+```java
+List<Song> songs = new ArrayList<>(library.getSongs());
+songTable.setItems(FXCollections.observableArrayList(songs));
+songs.add(new Song("Blue Monday"));
+```
+
+- A. The new song, because the table listens to `songs`.
+- B. The original songs only: the table shows a separate `ObservableList`, and adding to the plain `songs` list notifies nobody.
+- C. An empty table, because `setItems` needs an `ArrayList`.
+- D. Nothing: adding to `songs` throws an exception because it is now owned by the table.
+
+**Answer:** B
+
+**Explanation:** Only an `ObservableList` tells listeners when something is added; `observableArrayList(songs)` copies the elements into a new list, and that new list is the one the `TableView` listens to.
+
+**Source:** lectures/Week 02 - Lesson 02 - MVC and CRUD.pdf — Why an ObservableList?
+
+## 15. `Product` is changed from a class with getters into `record Product(String name, double unitPrice) { }`. The columns still use `PropertyValueFactory` with `"name"` and `"unitPrice"`. What happens?
+
+- A. The rows are there, but the cells are empty, because a record has `name()`, not `getName()`.
+- B. Nothing changes, because records are designed for exactly this.
+- C. It does not compile, because a record cannot be shown in a `TableView`.
+- D. The table shows each record's `toString()` in every column.
+
+**Answer:** A
+
+**Explanation:** `PropertyValueFactory` looks for the getter `getX()`; a record generates accessors without `get`, so the factory finds nothing to show.
+
+**Source:** lectures/Week 02 - Lesson 02 - MVC and CRUD.pdf — Configure the TableView
+
+# Questions: Week 3, lesson 1 - Properties, bindings and windows
+
+Source: lectures/Week 03 - Lesson 01 - Properties, bindings and ObservableList.pdf
+
+## 16. What does this code print?
+
+```java
+IntegerProperty level = new SimpleIntegerProperty(1);
+level.addListener((obs, oldValue, newValue) ->
+        System.out.print(oldValue + ">" + newValue + " "));
+level.set(3);
+level.set(5);
+```
+
+- A. `3 5 `
+- B. `1>5 `
+- C. `1>3 1>5 `
+- D. `1>3 3>5 `
+
+**Answer:** D
+
+**Explanation:** A change listener is called every time the value changes, and receives both the old and the new value.
+
+**Source:** lectures/Week 03 - Lesson 01 - Properties, bindings and ObservableList.pdf — Responding to changes
+
+## 17. The intent is that the Send button is only usable when an email address is entered and the terms box is ticked. How does this code behave?
+
+```java
+BooleanBinding complete = emailField.textProperty().isNotEmpty()
+        .and(termsCheckBox.selectedProperty());
+sendButton.disableProperty().bind(complete);
+```
+
+- A. As intended: the button is enabled only when both conditions hold.
+- B. The button is disabled exactly when both conditions hold, which is the opposite of the intent.
+- C. It does not compile, because `and` only accepts another `isNotEmpty()` binding.
+- D. The button never changes, because a binding needs a listener to update.
+
+**Answer:** B
+
+**Explanation:** The binding makes `disable` equal to `complete`; to enable the button when the form is complete, bind `disableProperty()` to `complete.not()`.
+
+**Source:** lectures/Week 03 - Lesson 01 - Properties, bindings and ObservableList.pdf — Disabling a button with a binding
+
+## 18. A controller does the following. What does the table show after `onReloadClick()` runs?
+
+```java
+private ObservableList<Order> orders;
+
+public void initialize(URL url, ResourceBundle rb) {
+    orders = FXCollections.observableArrayList(store.loadOrders());
+    orderTable.setItems(orders);
+}
+
+@FXML
+private void onReloadClick() {
+    orders = FXCollections.observableArrayList(store.loadOrders());
+}
+```
+
+- A. The newly loaded orders, because `orders` is an `ObservableList`.
+- B. An empty table.
+- C. Still the old list: the table holds the original list object, and only the variable was replaced.
+- D. Nothing: an exception is thrown because the list is already in use.
+
+**Answer:** C
+
+**Explanation:** Listeners follow the object: replacing the list object is not the same as changing it, so the table keeps listening to the first list.
+
+**Source:** lectures/Week 03 - Lesson 01 - Properties, bindings and ObservableList.pdf — ObservableList revisited
+
+## 19. A main window opens an edit dialog like this. What is the problem?
+
+```java
+EditCustomerController c = loader.getController();
+dialog.setScene(scene);
+dialog.show();
+Customer edited = c.getResult();
+if (edited != null) { customers.add(edited); }
+```
+
+- A. `show()` returns immediately, so `getResult()` runs before the user has done anything.
+- B. `getController()` always returns `null` for a dialog.
+- C. `customers.add` must be called inside the dialog's controller.
+- D. Nothing: `show()` blocks until the dialog is closed.
+
+**Answer:** A
+
+**Explanation:** `show()` returns immediately while `showAndWait()` blocks until the dialog closes, which is when the result can be read.
+
+**Source:** lectures/Week 03 - Lesson 01 - Properties, bindings and ObservableList.pdf — Getting the data back out
+
+# Questions: Week 3, lesson 2 - Exceptions
+
+Source: lectures/Week 03 - Lesson 02 - Exceptions.pdf
+
+## 20. What happens when this method is compiled?
+
+```java
+public String loadNotes(Path file) {
+    return Files.readString(file);
+}
+```
+
+- A. It compiles; if the file is missing, the method returns `null`.
+- B. It does not compile: `readString` throws the checked `IOException`, which must be caught or declared with `throws`.
+- C. It compiles; any exception is unchecked and simply ends the program.
+- D. It does not compile, because `Path` cannot be passed as a parameter.
+
+**Answer:** B
+
+**Explanation:** Checked exceptions such as `IOException` must be handled, and the compiler checks that you either catch them or declare them in the method signature.
+
+**Source:** lectures/Week 03 - Lesson 02 - Exceptions.pdf — The 2 kinds of exceptions
+
+## 21. What happens when this code is compiled?
+
+```java
+try {
+    String text = Files.readString(path);
+} catch (Exception e) {
+    showError("Something went wrong");
+} catch (IOException e) {
+    showError("Could not read the file");
+}
+```
+
+- A. It does not compile, because the `IOException` block is unreachable after `catch (Exception e)`.
+- B. It compiles; an `IOException` goes to the second block because it is more specific.
+- C. It compiles; both blocks run for an `IOException`.
+- D. It compiles with a warning, and the second block is ignored at runtime.
+
+**Answer:** A
+
+**Explanation:** Catch blocks must go from specific to general; once `Exception` is caught, a later `IOException` block can never be reached and the compiler rejects it.
+
+**Source:** lectures/Week 03 - Lesson 02 - Exceptions.pdf — Catching multiple exception types
+
+## 22. `stock` is `2`. What does this code print?
+
+```java
+public class StockTooLowException extends Exception {
+    public StockTooLowException(int left) {
+        super("Only " + left + " left in stock");
+    }
+}
+
+public void reserve(int quantity) throws StockTooLowException {
+    if (quantity > stock) {
+        throw new StockTooLowException(stock);
+    }
+    stock -= quantity;
+}
+
+try {
+    reserve(5);
+    System.out.println("Reserved");
+} catch (StockTooLowException e) {
+    System.out.println(e.getMessage());
+}
+```
+
+- A. `Reserved`
+- B. `Only 2 left in stock`
+- C. `null`, because a custom exception has no message of its own.
+- D. Nothing: it does not compile, because a custom exception cannot have a constructor.
+
+**Answer:** B
+
+**Explanation:** `throw` stops `reserve` before `stock` changes and before `"Reserved"` is printed; the message passed to `super(...)` in the custom exception's constructor is what `getMessage()` returns.
+
+**Source:** lectures/Week 03 - Lesson 02 - Exceptions.pdf — Throwing exceptions
+
+# Questions: Week 4, lesson 1 - File I/O
+
+Source: lectures/Week 04 - Lesson 01 - File IO with Path and Files.pdf
+
+## 23. An application is started from IntelliJ and reads `Path.of("data", "members.csv")`. The source file that contains this line is in `src/main/java/nl/club/service`. Where does Java look for the file?
+
+- A. In `src/main/java/nl/club/service/data/members.csv`
+- B. In the `data` folder under the working directory, which in IntelliJ is the project root.
+- C. In the user's home folder.
+- D. In the folder that contains the JDK.
+
+**Answer:** B
+
+**Explanation:** A relative path is relative to the working directory, where the JVM was started, not to where the source file lives; `Path.of("").toAbsolutePath()` shows it.
+
+**Source:** lectures/Week 04 - Lesson 01 - File IO with Path and Files.pdf — Two things that waste an afternoon
+
+## 24. What happens when the user presses Cancel in the save dialog?
+
+```java
+FileChooser chooser = new FileChooser();
+File target = chooser.showSaveDialog(stage);
+saveTo(target.toPath());
+```
+
+- A. `showSaveDialog` throws an `IOException`.
+- B. The file is saved under a default name.
+- C. `target` is `null`, so `target.toPath()` throws a `NullPointerException`.
+- D. `showSaveDialog` keeps the dialog open until a file is chosen.
+
+**Answer:** C
+
+**Explanation:** `showOpenDialog` and `showSaveDialog` both return `null` when the user cancels, so the result must always be checked.
+
+**Source:** lectures/Week 04 - Lesson 01 - File IO with Path and Files.pdf — Letting the user choose the file
+
+# Questions: Week 4, lesson 2 - JSON
+
+Source: lectures/Week 04 - Lesson 02 - JSON.pdf
+
+## 25. A JSON file has a field `"colour": "red"` that no field in the target Java class matches. The `ObjectMapper` has default settings. What happens, and which annotation changes it?
+
+- A. The field is ignored by default; `@JsonProperty` makes Jackson throw instead.
+- B. `readValue` throws an exception; `@JsonIgnoreProperties(ignoreUnknown = true)` makes Jackson ignore the field.
+- C. Jackson adds a `colour` field to the class at runtime; `@JsonTypeInfo` prevents this.
+- D. The whole object is set to `null`; `@JsonSubTypes` prevents this.
+
+**Answer:** B
+
+**Explanation:** The class has to match the JSON; an unexpected field throws unless the class is annotated with `@JsonIgnoreProperties(ignoreUnknown = true)`.
+
+**Source:** lectures/Week 04 - Lesson 02 - JSON.pdf — Important annotations
+
+## 26. Given the classes below, what is the runtime class of `v` after `Vehicle v = mapper.readValue(json, Vehicle.class);` with `json` = `{"kind":"bike","gears":21}`?
+
+```java
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "kind")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = Car.class,  name = "car"),
+    @JsonSubTypes.Type(value = Bike.class, name = "bike")
+})
+public abstract class Vehicle { ... }
+```
+
+- A. `Bike`
+- B. `Vehicle`
+- C. `LinkedHashMap`, because Jackson cannot build an abstract class
+- D. `Car`, because it is the first subtype listed
+
+**Answer:** A
+
+**Explanation:** Jackson reads the type field, looks its value up in `@JsonSubTypes`, and constructs that subclass.
+
+**Source:** lectures/Week 04 - Lesson 02 - JSON.pdf — The type field chooses the class
+
+# Questions: Week 5, lesson 1 - OOP in Java, and the first patterns
+
+Source: lectures/Week 05 - Lesson 01 - OOP in Java and the first patterns.pdf
+
+## 27. What happens when this code is compiled?
+
+```java
+public abstract class Discount {
+    public abstract double apply(double price);
+    public String label() { return "discount"; }
+}
+
+public class SeasonalDiscount extends Discount {
+    @Override
+    public String label() { return "seasonal"; }
+}
+```
+
+- A. It does not compile, because `SeasonalDiscount` neither overrides `apply` nor is declared abstract.
+- B. It compiles; calling `apply` on a `SeasonalDiscount` returns `0.0`.
+- C. It does not compile, because an abstract class may not contain a method with a body.
+- D. It compiles, but `new SeasonalDiscount()` throws an exception at runtime.
+
+**Answer:** A
+
+**Explanation:** A subclass must override every abstract method or be declared abstract itself; abstract classes may still contain ordinary methods with a body.
+
+**Source:** lectures/Week 05 - Lesson 01 - OOP in Java and the first patterns.pdf — Abstract classes
+
+## 28. Which statement about these lines is correct?
+
+```java
+final List<String> guests = new ArrayList<>();
+guests.add("Noor");             // line 1
+guests = new ArrayList<>();     // line 2
+```
+
+- A. Line 1 compiles, line 2 does not: `final` stops the variable being reassigned, not the list being changed.
+- B. Both lines compile, because `final` only applies to primitives.
+- C. Neither line compiles, because a final list is immutable.
+- D. Line 1 compiles but throws `UnsupportedOperationException` at runtime.
+
+**Answer:** A
+
+**Explanation:** On a variable, `final` means it cannot be reassigned (C# `readonly`); the object it refers to can still be modified.
+
+**Source:** lectures/Week 05 - Lesson 01 - OOP in Java and the first patterns.pdf — The final keyword
+
+## 29. Given the classes below and `Employee staff = new Manager();`, which statement is true?
+
+```java
+class Employee {
+    double bonus() { return 100; }
+}
+class Manager extends Employee {
+    @Override double bonus() { return 500; }
+    void approveLeave() { }
+}
+```
+
+- A. `staff.bonus()` returns `500.0`, and `staff.approveLeave()` does not compile without a cast to `Manager`.
+- B. `staff.bonus()` returns `100.0`, because the variable is of type `Employee`.
+- C. `staff.approveLeave()` compiles, because the object really is a `Manager`.
+- D. The assignment `Employee staff = new Manager();` does not compile without an explicit cast.
+
+**Answer:** A
+
+**Explanation:** A subclass object can always replace a parent object, and the overridden method of the actual object runs; the compiler only allows the methods of the declared type, so extra methods need a cast.
+
+**Source:** lectures/Week 05 - Lesson 01 - OOP in Java and the first patterns.pdf — Polymorphism and casting
+
+## 30. Using the same `Employee` and `Manager` classes, what happens here?
+
+```java
+Employee intern = new Employee();
+Manager boss = (Manager) intern;
+boss.approveLeave();
+```
+
+- A. It does not compile, because an `Employee` can never be cast to `Manager`.
+- B. It runs, and `approveLeave()` does nothing.
+- C. It runs, and `boss` is automatically converted into a new `Manager`.
+- D. It compiles, but the cast throws a `ClassCastException` at runtime.
+
+**Answer:** D
+
+**Explanation:** An explicit cast between compatible types compiles, but it only succeeds at runtime when the object really is of that type; this one is a plain `Employee`.
+
+**Source:** lectures/Week 05 - Lesson 01 - OOP in Java and the first patterns.pdf — Polymorphism and casting
+
+## 31. This class is meant to be a Singleton. What is wrong with it?
+
+```java
+public class AppSettings {
+    private static AppSettings instance;
+
+    public AppSettings() { }
+
+    public static AppSettings getInstance() {
+        if (instance == null) {
+            instance = new AppSettings();
+        }
+        return instance;
+    }
+}
+```
+
+- A. The constructor is public, so other code can still create extra instances with `new AppSettings()`.
+- B. `instance` must not be static.
+- C. `getInstance()` must create a new object on every call.
+- D. Nothing; this is a correct Singleton.
+
+**Answer:** A
+
+**Explanation:** A Singleton ensures a class has only one instance and gives a global point of access; that requires a private constructor, so `getInstance()` is the only way to get the object.
+
+**Source:** lectures/Week 05 - Lesson 01 - OOP in Java and the first patterns.pdf — Singleton - Example
+
+## 32. What does this code print?
+
+```java
+abstract class Shift {
+    public final String plan() {
+        return start() + " / " + work() + " / " + end();
+    }
+    String start() { return "clock in"; }
+    abstract String work();
+    String end()   { return "clock out"; }
+}
+
+class NightShift extends Shift {
+    String work() { return "patrol"; }
+    String end()  { return "hand over"; }
+}
+
+System.out.println(new NightShift().plan());
+```
+
+- A. `clock in / patrol / hand over`
+- B. `clock in / patrol / clock out`
+- C. `patrol / hand over`
+- D. Nothing: it does not compile, because `plan()` is final.
+
+**Answer:** A
+
+**Explanation:** The template method fixes the order; the shared step `start()` comes from the parent, and the steps the subclass fills in (`work()` and `end()`) run the subclass versions.
+
+**Source:** lectures/Week 05 - Lesson 01 - OOP in Java and the first patterns.pdf — Template Method (1 of 2)
+
+# Questions: Week 5, lesson 2 - More design patterns
+
+Source: lectures/Week 05 - Lesson 02 - Patterns in the application.pdf
+
+## 33. What does this code print?
+
+```java
+interface PriceListener { void priceChanged(double price); }
+
+class PriceFeed {
+    private final List<PriceListener> listeners = new ArrayList<>();
+    private double price;
+
+    void subscribe(PriceListener l)   { listeners.add(l); }
+    void unsubscribe(PriceListener l) { listeners.remove(l); }
+
+    void setPrice(double price) {
+        this.price = price;
+        for (PriceListener l : listeners) { l.priceChanged(price); }
+    }
+}
+
+PriceFeed feed = new PriceFeed();
+PriceListener app = p -> System.out.print("app" + p + " ");
+PriceListener log = p -> System.out.print("log" + p + " ");
+feed.setPrice(9.0);
+feed.subscribe(app);
+feed.subscribe(log);
+feed.setPrice(10.0);
+feed.unsubscribe(app);
+feed.setPrice(12.0);
+```
+
+- A. `app9.0 log9.0 app10.0 log10.0 log12.0 `
+- B. `app10.0 log10.0 app12.0 log12.0 `
+- C. `app10.0 log10.0 app12.0 `
+- D. `app10.0 log10.0 log12.0 `
+
+**Answer:** D
+
+**Explanation:** In the Observer pattern the subject calls the update method on every observer currently in its list; observers registered later miss earlier changes, and a removed observer is no longer notified.
+
+**Source:** lectures/Week 05 - Lesson 02 - Patterns in the application.pdf — Observer (1 of 2)
+
+## 34. What does this code print?
+
+```java
+interface DocState { void submit(Doc d); void approve(Doc d); }
+
+class Doc {
+    private DocState state = new Draft();
+    void setState(DocState s) { state = s; }
+    void submit()  { state.submit(this); }
+    void approve() { state.approve(this); }
+}
+
+class Draft implements DocState {
+    public void submit(Doc d)  { System.out.print("R "); d.setState(new InReview()); }
+    public void approve(Doc d) { System.out.print("x "); }
+}
+class InReview implements DocState {
+    public void submit(Doc d)  { System.out.print("x "); }
+    public void approve(Doc d) { System.out.print("P "); d.setState(new Published()); }
+}
+class Published implements DocState {
+    public void submit(Doc d)  { System.out.print("L "); }
+    public void approve(Doc d) { System.out.print("L "); }
+}
+
+Doc doc = new Doc();
+doc.approve();
+doc.submit();
+doc.submit();
+doc.approve();
+doc.submit();
+```
+
+- A. `P R x P L `
+- B. `x R R P L `
+- C. `x R x P L `
+- D. `x R x P P `
+
+**Answer:** C
+
+**Explanation:** In the State pattern the context delegates every call to its current state object, and the state objects switch the context to a new state, so the same call behaves differently over time.
+
+**Source:** lectures/Week 05 - Lesson 02 - Patterns in the application.pdf — State (1 of 4)
+
+## 35. At checkout a customer picks standard, express or pickup delivery. The `Cart` has a field of interface type `ShippingRule`; the checkout screen calls `cart.setShippingRule(new ExpressShipping())` and the cart later calls `shippingRule.cost(items)`. Which pattern is this?
+
+- A. State
+- B. Template Method
+- C. Singleton
+- D. Strategy
+
+**Answer:** D
+
+**Explanation:** Strategy defines a family of interchangeable algorithms behind one interface, and the client chooses which one to use, so the algorithm varies independently from the class that uses it.
+
+**Source:** lectures/Week 05 - Lesson 02 - Patterns in the application.pdf — Strategy
+
+# Questions: Week 6, lesson 1 - Styling with CSS
+
+Source: lectures/Week 06 - Lesson 01 - Styling with CSS.pdf
+
+## 36. Which rule in a JavaFX stylesheet makes the background of every button white?
+
+- A. `.button { -fx-background-color: white; }`
+- B. `.button { background-color: white; }`
+- C. `.button { -fx-bg-color: white; }`
+- D. `#button { background: white; }`
+
+**Answer:** A
+
+**Explanation:** JavaFX has its own CSS: every property starts with `-fx-`, and the background colour of a control is `-fx-background-color`.
+
+**Source:** lectures/Week 06 - Lesson 01 - Styling with CSS.pdf — How JavaFX CSS differs from web CSS
+
+## 37. A stylesheet contains the rules below. The value on the first line is changed to `#8e44ad`. What is the effect?
+
+```css
+.root   { brand-accent: #2a7f62; }
+.button { -fx-background-color: brand-accent; }
+.label  { -fx-text-fill: brand-accent; }
+```
+
+- A. Only the background of the root changes.
+- B. Nothing, until each rule that uses `brand-accent` is edited as well.
+- C. All buttons and labels change to the new colour.
+- D. The stylesheet fails to load, because a name without `-fx-` is not allowed.
+
+**Answer:** C
+
+**Explanation:** A looked-up colour is named once and looked up on the node and then on its parents, so a colour set on `.root` reaches everything below it.
+
+**Source:** lectures/Week 06 - Lesson 01 - Styling with CSS.pdf — Looked-up colours
+
+# Questions: Week 6, lesson 2 - Concurrency for JavaFX
+
+Source: lectures/Week 06 - Lesson 02 - Concurrency for JavaFX.pdf
+
+## 38. `exportAll()` takes about six seconds. What does the user experience after clicking the button?
+
+```java
+@FXML
+private void onExportClick() {
+    statusLabel.setText("Exporting...");
+    exportAll();
+    statusLabel.setText("Done");
+}
+```
+
+- A. The window freezes and stops responding for about six seconds, and then the label shows "Done".
+- B. "Exporting..." for six seconds while the window stays responsive, then "Done".
+- C. An `IllegalStateException`, because a handler may not run for more than a few seconds.
+- D. JavaFX moves `exportAll()` to a background thread automatically.
+
+**Answer:** A
+
+**Explanation:** Event handlers run on the JavaFX application thread; while slow code runs there, the window cannot react to the user or redraw until the handler returns.
+
+**Source:** lectures/Week 06 - Lesson 02 - Concurrency for JavaFX.pdf — The JavaFX application thread
+
+## 39. `tick()` counts `secondsLeft` down by one but does nothing else. What happens when `secondsLeft` reaches zero?
+
+```java
+Timeline countdown = new Timeline(new KeyFrame(Duration.seconds(1), e -> tick()));
+countdown.setCycleCount(Timeline.INDEFINITE);
+countdown.setOnFinished(e -> showResults());
+countdown.play();
+```
+
+- A. `showResults()` runs, because the timeline finishes.
+- B. The timeline pauses automatically at zero.
+- C. An exception is thrown, because `secondsLeft` becomes negative.
+- D. `showResults()` is never called and the timeline keeps ticking; it has to be stopped from inside the `KeyFrame`.
+
+**Answer:** D
+
+**Explanation:** `setOnFinished` never fires on an `INDEFINITE` timeline; stop it yourself from inside the `KeyFrame` handler and show the results there.
+
+**Source:** lectures/Week 06 - Lesson 02 - Concurrency for JavaFX.pdf — Timeline: play, pause, stop
+
+## 40. A `ProgressBar` was bound with `progressBar.progressProperty().bind(importTask.progressProperty());`. When the user starts a second import, the code runs `progressBar.setProgress(0);` to reset the bar. What happens?
+
+- A. The bar resets to 0 and stays bound to the old task.
+- B. An exception is thrown, because a bound property cannot be set; unbind first.
+- C. The bar resets, and the binding automatically moves to the new task.
+- D. Nothing happens, because a finished task releases its bindings.
+
+**Answer:** B
+
+**Explanation:** A bound property cannot be set from code, so unbind when the task is done if the control gets reused.
+
+**Source:** lectures/Week 06 - Lesson 02 - Concurrency for JavaFX.pdf — Binding a ProgressBar to a Task
+
+</script>
+
+<script>
+(function () {
+  "use strict";
+  const STORE_KEY = "java-practice-exam-v1";
+
+  // ---------- Parse the exam markdown ----------
+  function parseExam(md) {
+    const lines = md.replace(/\r/g, "").split("\n");
+    const lectures = [];
+    const questions = [];
+    let lec = null, q = null, code = null;
+    for (const line of lines) {
+      if (code) {
+        if (line.startsWith("```")) { q.blocks.push(code.join("\n")); code = null; }
+        else code.push(line);
+        continue;
+      }
+      if (line.startsWith("```")) { if (q) code = []; continue; }
+      let m;
+      if ((m = line.match(/^# Questions: (.+?) - (.+)$/))) {
+        lec = { id: lectures.length, label: m[1].trim(), title: m[2].trim(), file: "", questions: [] };
+        lectures.push(lec); q = null; continue;
+      }
+      if ((m = line.match(/^Source: (.+)$/)) && lec && !q) { lec.file = m[1].trim(); continue; }
+      if ((m = line.match(/^## (\d+)\. (.+)$/))) {
+        q = { n: +m[1], prompt: m[2].trim(), blocks: [], options: [], answer: "", explanation: "", section: "", lec: lec };
+        questions.push(q); lec.questions.push(q); continue;
+      }
+      if (!q) continue;
+      if ((m = line.match(/^- ([A-D])\. (.+)$/))) { q.options.push({ key: m[1], text: m[2] }); continue; }
+      if ((m = line.match(/^\*\*Answer:\*\* ([A-D])/))) { q.answer = m[1]; continue; }
+      if ((m = line.match(/^\*\*Explanation:\*\* (.+)$/))) { q.explanation = m[1]; continue; }
+      if ((m = line.match(/^\*\*Source:\*\* .+? — (.+)$/))) { q.section = m[1].trim(); continue; }
+    }
+    return { lectures, questions };
+  }
+
+  const exam = parseExam(document.getElementById("exam-md").textContent);
+  const Q = exam.questions;
+
+  // ---------- Helpers ----------
+  function esc(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function inline(s) {
+    return esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
+  }
+  function lectureName(lec) { return lec.title; }
+  function weekLabel(lec) {
+    return lec.label.replace(/,\s*lesson/i, " · Lesson");
+  }
+
+  // ---------- State ----------
+  let state = load() || fresh("");
+  function fresh(name, mode) {
+    return { name: name, mode: mode || "exam", screen: name ? "quiz" : "start", idx: 0, answers: {}, checked: {}, finished: false };
+  }
+  function load() {
+    try {
+      const s = JSON.parse(localStorage.getItem(STORE_KEY));
+      if (s && typeof s === "object" && s.answers) return s;
+    } catch (e) {}
+    return null;
+  }
+  function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+  const app = document.getElementById("app");
+
+  function render() {
+    save();
+    if (state.screen === "quiz") renderQuiz();
+    else if (state.screen === "results") renderResults();
+    else renderStart();
+    window.scrollTo(0, 0);
+  }
+
+  // ---------- Start screen ----------
+  function answeredCount() {
+    return Object.keys(isExam() ? state.answers : state.checked).length;
+  }
+  function isExam() { return state.mode === "exam"; }
+
+  function renderStart() {
+    const answered = answeredCount();
+    const resume = state.name && answered > 0 && answered < Q.length && !state.finished;
+    const mode = state.mode || "exam";
+    app.innerHTML = `
+      <header class="qhead">
+        <p class="eyebrow">Java &amp; JavaFX · Practice exam</p>
+        <h1>Practise for the Java exam</h1>
+        <p class="muted">${Q.length} multiple-choice questions taken from the lectures. At the end you get your score and a list of the lectures to study again.</p>
+      </header>
+      <section class="sheet">
+        <form id="start-form" class="start-form" novalidate>
+          <div class="field">
+            <label for="student-name">Your name</label>
+            <input type="text" id="student-name" autocomplete="name" maxlength="60" placeholder="For example: Sam de Vries" value="${esc(state.name || "")}">
+            <p class="hint" id="name-hint">Your name appears on your result.</p>
+          </div>
+          <fieldset class="modes">
+            <legend>How do you want to practise?</legend>
+            <label class="mode" for="mode-exam">
+              <input type="radio" name="mode" id="mode-exam" value="exam" ${mode === "exam" ? "checked" : ""}>
+              <span class="mode-body">
+                <span class="mode-title">Exam mode <span class="tag">Recommended</span></span>
+                <span class="mode-desc">Answer all questions like on the real exam. You can go back and change answers. You see the correct answers, explanations and study advice at the end.</span>
+              </span>
+            </label>
+            <label class="mode" for="mode-practice">
+              <input type="radio" name="mode" id="mode-practice" value="practice" ${mode === "practice" ? "checked" : ""}>
+              <span class="mode-body">
+                <span class="mode-title">Learning mode</span>
+                <span class="mode-desc">Check each answer straight away and read the explanation before you go to the next question.</span>
+              </span>
+            </label>
+          </fieldset>
+          <div class="callout">
+            <span class="eyebrow">How to get the most out of this</span>
+            <ol class="advice">
+              <li><b>Take it in exam mode first</b>, without your notes. Recalling an answer yourself is what makes it stick, and your score shows what you really know.</li>
+              <li><b>Study the slides the results point you to.</b> Read the explanation of every question you missed, and of any question you guessed.</li>
+              <li><b>A few days later, take it again</b>, in exam mode for a fresh measurement, or in learning mode to go over the explanations one by one.</li>
+            </ol>
+          </div>
+        </form>
+        <div class="actions">
+          <button type="submit" form="start-form" id="start-btn">${resume ? "Start again" : "Start"}</button>
+          ${resume ? `<button type="button" class="secondary" id="resume-btn">Continue at question ${Math.min(answered + 1, Q.length)}</button>` : ""}
+        </div>
+      </section>`;
+    const input = document.getElementById("student-name");
+    document.getElementById("start-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const name = input.value.trim();
+      if (!name) {
+        const hint = document.getElementById("name-hint");
+        hint.textContent = "Enter your name to start.";
+        hint.style.color = "var(--bad)";
+        input.focus();
+        return;
+      }
+      const picked = document.querySelector('input[name="mode"]:checked');
+      state = fresh(name, picked ? picked.value : "exam");
+      render();
+    });
+    const r = document.getElementById("resume-btn");
+    if (r) r.addEventListener("click", () => {
+      const name = input.value.trim() || state.name;
+      state.name = name;
+      state.screen = "quiz";
+      state.idx = Math.min(answered, Q.length - 1);
+      render();
+    });
+  }
+
+  // ---------- Quiz screen ----------
+  function score() {
+    let s = 0;
+    for (const q of Q) if (state.checked[q.n] && state.answers[q.n] === q.answer) s++;
+    return s;
+  }
+
+  function renderQuiz() {
+    const q = Q[state.idx];
+    const chosen = state.answers[q.n] || "";
+    const checked = !!state.checked[q.n];
+    const isLast = state.idx === Q.length - 1;
+    const right = chosen === q.answer;
+    const exam = isExam();
+
+    const dots = Q.map((x, i) => {
+      let c = "dot";
+      if (exam) { if (state.answers[x.n]) c += " done"; }
+      else if (state.checked[x.n]) c += state.answers[x.n] === x.answer ? " good" : " bad";
+      if (i === state.idx) c += " current";
+      return `<span class="${c}" title="Question ${x.n}"></span>`;
+    }).join("");
+
+    const opts = q.options.map(o => {
+      let c = "opt";
+      if (checked) {
+        if (o.key === q.answer) c += " correct";
+        else if (o.key === chosen) c += " wrong";
+      } else if (o.key === chosen) c += " selected";
+      return `<button type="button" class="${c}" data-key="${o.key}" ${checked ? "disabled" : ""} aria-pressed="${o.key === chosen}">
+        <span class="bubble">${o.key}</span><span class="opt-text">${inline(o.text)}</span></button>`;
+    }).join("");
+
+    app.innerHTML = `
+      <div class="progress">
+        <div class="progress-row">
+          <span class="eyebrow">${esc(state.name)} · ${exam ? "Exam mode" : "Learning mode"}</span>
+          <span class="count">${answeredCount()} of ${Q.length} answered${exam ? "" : ` · ${score()} correct`}</span>
+        </div>
+        <div class="strip" aria-hidden="true">${dots}</div>
+      </div>
+      <section class="sheet">
+        <div class="qhead">
+          <div class="qmeta"><span class="tag">${esc(weekLabel(q.lec))}</span><span class="eyebrow">${esc(lectureName(q.lec))}</span></div>
+          <span class="qnum">Question ${q.n} of ${Q.length}</span>
+          <p class="prompt">${inline(q.prompt)}</p>
+        </div>
+        ${q.blocks.map(b => `<pre><code>${esc(b)}</code></pre>`).join("")}
+        <div class="opts" role="group" aria-label="Answer options">${opts}</div>
+        ${checked ? `
+          <div class="feedback ${right ? "good" : "bad"}" role="status">
+            <span class="verdict">${right ? "Correct" : `Not quite. The correct answer is ${q.answer}.`}</span>
+            <p>${inline(q.explanation)}</p>
+            <p class="src">Lecture: ${esc(q.lec.title)} — ${esc(q.section)}</p>
+          </div>` : ""}
+        <div class="actions">
+          ${state.idx > 0 ? `<button type="button" class="secondary" id="prev-btn">Previous</button>` : ""}
+          <span class="spacer"></span>
+          ${exam
+            ? (isLast
+                ? `<button type="button" id="finish-btn">Finish and see results</button>`
+                : `<button type="button" id="next-btn">Next question</button>`)
+            : (checked
+                ? `<button type="button" id="next-btn">${isLast ? "See my results" : "Next question"}</button>`
+                : `<button type="button" id="check-btn" ${chosen ? "" : "disabled"}>Check answer</button>`)}
+        </div>
+        <p class="notice" id="finish-note" hidden></p>
+        <p class="hint">Keyboard: press A–D to choose, Enter to ${exam ? "go to the next question" : "check or go on"}.</p>
+      </section>`;
+
+    app.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => choose(b.dataset.key)));
+    const check = document.getElementById("check-btn");
+    if (check) check.addEventListener("click", doCheck);
+    const next = document.getElementById("next-btn");
+    if (next) {
+      next.addEventListener("click", goNext);
+      if (!exam || chosen) next.focus({ preventScroll: true });
+    }
+    const finish = document.getElementById("finish-btn");
+    if (finish) finish.addEventListener("click", tryFinish);
+    const prev = document.getElementById("prev-btn");
+    if (prev) prev.addEventListener("click", () => { state.idx--; render(); });
+  }
+
+  function choose(key) {
+    const q = Q[state.idx];
+    if (state.checked[q.n]) return;
+    state.answers[q.n] = key;
+    finishArmed = false;
+    renderQuiz(); save();
+    const c = document.getElementById(isExam() ? (state.idx === Q.length - 1 ? "finish-btn" : "next-btn") : "check-btn");
+    if (c) c.focus({ preventScroll: true });
+  }
+
+  // Exam mode: finishing with open questions needs a second click (the viewer has no confirm()).
+  let finishArmed = false;
+  function tryFinish() {
+    const open = Q.filter(x => !state.answers[x.n]);
+    if (open.length && !finishArmed) {
+      finishArmed = true;
+      const note = document.getElementById("finish-note");
+      note.innerHTML = `You have not answered ${open.length === 1 ? "question" : "questions"} ${open.map(x => x.n).join(", ")}. `
+        + `Unanswered questions count as wrong. Click <b>Finish anyway</b> to see your results, or go back with Previous.`;
+      note.hidden = false;
+      document.getElementById("finish-btn").textContent = "Finish anyway";
+      return;
+    }
+    finishArmed = false;
+    for (const x of Q) state.checked[x.n] = true;
+    state.finished = true;
+    state.screen = "results";
+    render();
+  }
+  function doCheck() {
+    const q = Q[state.idx];
+    if (!state.answers[q.n]) return;
+    state.checked[q.n] = true;
+    renderQuiz(); save();
+  }
+  function goNext() {
+    finishArmed = false;
+    if (isExam()) {
+      if (state.idx < Q.length - 1) { state.idx++; render(); } else tryFinish();
+      return;
+    }
+    if (state.idx < Q.length - 1) {
+      state.idx++;
+      render();
+    } else {
+      const firstOpen = Q.findIndex(x => !state.checked[x.n]);
+      if (firstOpen >= 0) { state.idx = firstOpen; render(); return; }
+      state.finished = true;
+      state.screen = "results";
+      render();
+    }
+  }
+
+  document.addEventListener("keydown", e => {
+    if (state.screen !== "quiz" || e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.target && e.target.tagName === "INPUT") return;
+    const k = e.key.toUpperCase();
+    const q = Q[state.idx];
+    if (["A", "B", "C", "D"].includes(k) && q.options.some(o => o.key === k)) { e.preventDefault(); choose(k); }
+    else if (e.key === "Enter" && !(e.target && e.target.tagName === "BUTTON")) {
+      e.preventDefault();
+      if (isExam()) { if (state.idx === Q.length - 1) tryFinish(); else goNext(); }
+      else if (state.checked[q.n]) goNext(); else doCheck();
+    }
+  });
+
+  // ---------- Results screen ----------
+  function status(c, t) {
+    const r = c / t;
+    if (r === 1) return { cls: "solid", label: "Solid", color: "var(--good-edge)" };
+    if (r >= 0.5) return { cls: "review", label: "Review", color: "var(--pv-edge)" };
+    return { cls: "study", label: "Study again", color: "var(--bad-edge)" };
+  }
+
+  function renderResults() {
+    const total = Q.length, s = score(), pct = Math.round((s / total) * 100);
+    const rows = exam.lectures.map(l => {
+      const c = l.questions.filter(q => state.answers[q.n] === q.answer).length;
+      const missed = l.questions.filter(q => state.answers[q.n] !== q.answer);
+      return { l, c, t: l.questions.length, missed, ratio: c / l.questions.length };
+    }).sort((a, b) => a.ratio - b.ratio || b.missed.length - a.missed.length || a.l.id - b.l.id);
+
+    const weak = rows.filter(r => r.ratio < 1);
+    const studyFirst = rows.filter(r => r.ratio < 0.5);
+    const firstNames = (studyFirst.length ? studyFirst : weak).slice(0, 3).map(r => `<b>${esc(r.l.title)}</b>`);
+    let focusText;
+    if (!weak.length) focusText = "You answered every question correctly. Every lecture in this exam looks solid.";
+    else focusText = `Start with ${firstNames.length > 1 ? firstNames.slice(0, -1).join(", ") + " and " + firstNames.slice(-1) : firstNames[0]}. `
+      + `You missed questions in ${weak.length} of ${rows.length} lectures; each one below lists the slides to revisit.`;
+
+    const lecRows = rows.map(r => {
+      const st = status(r.c, r.t);
+      const sections = [...new Set(r.missed.map(q => q.section))];
+      return `<div class="lec">
+        <div>
+          <div class="lec-name">${esc(r.l.title)} <span class="chip ${st.cls}">${st.label}</span></div>
+          <div class="lec-week">${esc(weekLabel(r.l))}</div>
+        </div>
+        <div class="lec-score">${r.c} / ${r.t}</div>
+        <div class="bar-track" role="img" aria-label="${r.c} of ${r.t} correct"><i style="width:${(r.ratio * 100).toFixed(0)}%;background:${st.color}"></i></div>
+        ${sections.length ? `<div class="revisit">
+          <span>Revisit these slides:</span>
+          <ul>${sections.map(x => `<li>${inline(x)}</li>`).join("")}</ul>
+          <span class="file">${esc(r.l.file)}</span>
+        </div>` : ""}
+      </div>`;
+    }).join("");
+
+    const misses = Q.filter(q => state.answers[q.n] !== q.answer);
+    const missList = misses.map(q => {
+      const yours = q.options.find(o => o.key === state.answers[q.n]);
+      const right = q.options.find(o => o.key === q.answer);
+      return `<details class="miss">
+        <summary>Question ${q.n}: ${inline(q.prompt)}</summary>
+        <div class="miss-body">
+          ${q.blocks.map(b => `<pre><code>${esc(b)}</code></pre>`).join("")}
+          <div class="answer-line">
+            <span class="yours">Your answer: ${yours ? `${yours.key}. ${inline(yours.text)}` : "none"}</span>
+            <span class="right">Correct: ${right.key}. ${inline(right.text)}</span>
+          </div>
+          <p>${inline(q.explanation)}</p>
+          <p class="src">${esc(q.lec.title)} — ${esc(q.section)}</p>
+        </div>
+      </details>`;
+    }).join("");
+
+    app.innerHTML = `
+      <header class="qhead">
+        <p class="eyebrow">Practice exam result · ${isExam() ? "Exam mode" : "Learning mode"}</p>
+        <h1>${esc(state.name)}, here is how you did</h1>
+      </header>
+      <section class="sheet">
+        <div class="score-row">
+          <div class="score-big">${s}<small> / ${total}</small></div>
+          <div class="score-pct">${pct}% correct</div>
+        </div>
+        <p class="focus">${focusText}</p>
+      </section>
+      <section class="sheet">
+        <h2>Results per lecture</h2>
+        <p class="muted">Weakest lectures first. <b>Study again</b> means less than half correct, <b>Review</b> means at least half, <b>Solid</b> means all correct.</p>
+        <div class="lec-rows">${lecRows}</div>
+      </section>
+      ${misses.length ? `<section class="sheet">
+        <h2>Questions you missed (${misses.length})</h2>
+        <div>${missList}</div>
+      </section>` : ""}
+      <div class="actions">
+        <button type="button" id="retake-btn">Take the exam again</button>
+        <button type="button" class="secondary" id="name-btn">Use a different name</button>
+      </div>`;
+    document.getElementById("retake-btn").addEventListener("click", () => { state = fresh(state.name, state.mode); render(); });
+    document.getElementById("name-btn").addEventListener("click", () => { state = fresh(""); render(); });
+  }
+
+  render();
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+  const KEY = "java-practice-exam-theme";
+  const root = document.documentElement;
+  const buttons = document.querySelectorAll("[data-theme-set]");
+  function apply(mode) {
+    if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode);
+    else root.removeAttribute("data-theme");
+    buttons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.themeSet === mode)));
+  }
+  let saved = "system";
+  try { saved = localStorage.getItem(KEY) || "system"; } catch (e) {}
+  apply(saved);
+  buttons.forEach(b => b.addEventListener("click", () => {
+    apply(b.dataset.themeSet);
+    try { localStorage.setItem(KEY, b.dataset.themeSet); } catch (e) {}
+  }));
+})();
+</script>
