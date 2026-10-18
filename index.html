@@ -253,6 +253,19 @@ details.miss[open] summary { margin-bottom: 12px; }
 .advice { margin: 0; padding-left: 1.2rem; font-size: 14px; display: flex; flex-direction: column; gap: 4px; }
 .notice { background: var(--pv-soft); color: var(--ink); border-left: 3px solid var(--pv-edge); border-radius: var(--r); padding: 10px 12px; font-size: 14px; }
 .dot.done { background: var(--accent-line); }
+/* Mode switch and reset on the quiz screen */
+.seg { display: flex; gap: 2px; background: var(--sunken); border-radius: var(--r); padding: 2px; }
+.seg button {
+  font-size: 13.5px; font-weight: 600; border: 0; border-radius: 5px; padding: 6px 12px; cursor: pointer;
+  background: transparent; color: var(--ink-2);
+}
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-ink); }
+.reset-btn {
+  font-size: 13.5px; font-weight: 600; border: 1px solid var(--line); border-radius: var(--r);
+  padding: 6px 12px; cursor: pointer; background: transparent; color: var(--ink-2);
+}
+.reset-btn:hover { border-color: var(--bad-edge); color: var(--bad); }
+.reset-btn.armed { background: var(--bad-soft); border-color: var(--bad-edge); color: var(--bad); }
 @media (prefers-reduced-motion: no-preference) {
   .bar-track > i { transition: width 0.6s ease; }
 }
@@ -1225,9 +1238,9 @@ countdown.play();
   }
 
   // ---------- State ----------
-  let state = load() || fresh("");
-  function fresh(name, mode) {
-    return { name: name, mode: mode || "exam", screen: name ? "quiz" : "start", idx: 0, answers: {}, checked: {}, finished: false };
+  let state = load() || fresh("", "exam", "start");
+  function fresh(name, mode, screen) {
+    return { name: name, mode: mode || "exam", screen: screen || "quiz", idx: 0, answers: {}, checked: {}, finished: false };
   }
   function load() {
     try {
@@ -1256,7 +1269,7 @@ countdown.play();
 
   function renderStart() {
     const answered = answeredCount();
-    const resume = state.name && answered > 0 && answered < Q.length && !state.finished;
+    const resume = answered > 0 && answered < Q.length && !state.finished;
     const mode = state.mode || "exam";
     app.innerHTML = `
       <header class="qhead">
@@ -1267,9 +1280,9 @@ countdown.play();
       <section class="sheet">
         <form id="start-form" class="start-form" novalidate>
           <div class="field">
-            <label for="student-name">Your name</label>
+            <label for="student-name">Your name <span class="muted" style="font-weight:400">(optional)</span></label>
             <input type="text" id="student-name" autocomplete="name" maxlength="60" placeholder="For example: Sam de Vries" value="${esc(state.name || "")}">
-            <p class="hint" id="name-hint">Your name appears on your result.</p>
+            <p class="hint" id="name-hint">If you fill it in, it appears on your result.</p>
           </div>
           <fieldset class="modes">
             <legend>How do you want to practise?</legend>
@@ -1306,20 +1319,13 @@ countdown.play();
     document.getElementById("start-form").addEventListener("submit", e => {
       e.preventDefault();
       const name = input.value.trim();
-      if (!name) {
-        const hint = document.getElementById("name-hint");
-        hint.textContent = "Enter your name to start.";
-        hint.style.color = "var(--bad)";
-        input.focus();
-        return;
-      }
       const picked = document.querySelector('input[name="mode"]:checked');
       state = fresh(name, picked ? picked.value : "exam");
       render();
     });
     const r = document.getElementById("resume-btn");
     if (r) r.addEventListener("click", () => {
-      const name = input.value.trim() || state.name;
+      const name = input.value.trim();
       state.name = name;
       state.screen = "quiz";
       state.idx = Math.min(answered, Q.length - 1);
@@ -1363,7 +1369,14 @@ countdown.play();
     app.innerHTML = `
       <div class="progress">
         <div class="progress-row">
-          <span class="eyebrow">${esc(state.name)} · ${exam ? "Exam mode" : "Learning mode"}</span>
+          <div class="seg" role="group" aria-label="Mode">
+            <button type="button" data-mode="exam" aria-pressed="${exam}">Exam mode</button>
+            <button type="button" data-mode="practice" aria-pressed="${!exam}">Learning mode</button>
+          </div>
+          <button type="button" class="reset-btn" id="reset-btn">Reset progress</button>
+        </div>
+        <div class="progress-row">
+          <span class="eyebrow">${state.name ? esc(state.name) : "Practice exam"}</span>
           <span class="count">${answeredCount()} of ${Q.length} answered${exam ? "" : ` · ${score()} correct`}</span>
         </div>
         <div class="strip" aria-hidden="true">${dots}</div>
@@ -1398,6 +1411,26 @@ countdown.play();
       </section>`;
 
     app.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => choose(b.dataset.key)));
+    app.querySelectorAll(".seg [data-mode]").forEach(b => b.addEventListener("click", () => {
+      if (state.mode === b.dataset.mode) return;
+      state.mode = b.dataset.mode;
+      finishArmed = false;
+      renderQuiz(); save();
+    }));
+    // Reset needs a second click within a few seconds (the viewer has no confirm()).
+    const reset = document.getElementById("reset-btn");
+    let resetTimer = null;
+    reset.addEventListener("click", () => {
+      if (!reset.classList.contains("armed")) {
+        reset.classList.add("armed");
+        reset.textContent = "Click again to erase all answers";
+        resetTimer = setTimeout(() => { reset.classList.remove("armed"); reset.textContent = "Reset progress"; }, 4000);
+        return;
+      }
+      clearTimeout(resetTimer);
+      state = fresh(state.name, state.mode, "start");
+      render();
+    });
     const check = document.getElementById("check-btn");
     if (check) check.addEventListener("click", doCheck);
     const next = document.getElementById("next-btn");
@@ -1540,7 +1573,7 @@ countdown.play();
     app.innerHTML = `
       <header class="qhead">
         <p class="eyebrow">Practice exam result · ${isExam() ? "Exam mode" : "Learning mode"}</p>
-        <h1>${esc(state.name)}, here is how you did</h1>
+        <h1>${state.name ? esc(state.name) + ", here is" : "Here is"} how you did</h1>
       </header>
       <section class="sheet">
         <div class="score-row">
@@ -1560,10 +1593,10 @@ countdown.play();
       </section>` : ""}
       <div class="actions">
         <button type="button" id="retake-btn">Take the exam again</button>
-        <button type="button" class="secondary" id="name-btn">Use a different name</button>
+        <button type="button" class="secondary" id="name-btn">Back to start</button>
       </div>`;
     document.getElementById("retake-btn").addEventListener("click", () => { state = fresh(state.name, state.mode); render(); });
-    document.getElementById("name-btn").addEventListener("click", () => { state = fresh(""); render(); });
+    document.getElementById("name-btn").addEventListener("click", () => { state = fresh(state.name, state.mode, "start"); render(); });
   }
 
   render();
